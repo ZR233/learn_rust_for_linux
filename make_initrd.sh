@@ -1,36 +1,3 @@
-# Learn Rust-for-Linux
-
-## day 1
-
-今天的目标是编译并在`Qemu`上运行`kernel`。
-源码相当大，有4.5G，还需要给生成留出空间，感觉至少得给20G。
-编译`Qemu`
-
-```shell
-git clone git@github.com:qemu/qemu.git
-cd qemu
-mkdir build
-cd build
-../configure --target-list=riscv64-softmmu,riscv64-linux-user,aarch64-softmmu
-make -j4
-sudo make install
-
-```
-
-编译`BusyBox`：
-
-```shell
-wget https://busybox.net/downloads/busybox-1.36.1.tar.bz2
-tar xvf busybox-1.36.1.tar.bz2 
-cd busybox-1.36.1/
-make  ARCH=arm64 menuconfig -j4
-make  ARCH=arm64 install -j4
-
-```
-
-基于BusyBox制作initrd
-制作`initrd`步骤略多。这里`make_initrd.sh`就是用来自动制作`initrd`的脚本，内容：
-```shell
 #!/bin/bash
 
 MOUNT_DIR=mnt
@@ -70,5 +37,3 @@ mknod tty1 c 4 1
 cd $CURR_DIR
 umount $MOUNT_DIR
 echo "make initrd ok!"
-
-```
