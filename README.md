@@ -72,3 +72,23 @@ umount $MOUNT_DIR
 echo "make initrd ok!"
 
 ```
+
+然后必须 `sudo` 执行 `sudo ./make_inird.sh`
+
+接着，`Qemu`启动！
+
+```shell
+qemu-system-aarch64 \
+    -nographic \
+    -M virt \
+    -cpu cortex-a57 \
+    -smp 2 \
+    -m 4G \
+    -kernel /mnt/sdb/dev/linux/build/arch/arm64/boot \
+    -append "nokaslr root=/dev/ram init=/linuxrc console=ttyS0" \
+    -initrd disk.img
+```
+
+![image](image/qemu1.png)
+
+果然第一次就失败了。似乎是文件系统没做对
