@@ -1,6 +1,6 @@
 # Learn Rust-for-Linux
 
-## day 1
+## Day 1
 
 今天的目标是编译并在`Qemu`上运行`kernel`。
 源码相当大，有4.5G，还需要给生成留出空间，感觉至少得给20G。
@@ -92,3 +92,55 @@ qemu-system-aarch64 \
 ![image](image/qemu1.png)
 
 果然第一次就失败了。似乎是文件系统没做对
+
+## Day2
+
+仔细查看`qemu-system-aarch64 -h`，发现指令 `-initrd file    use 'file' as initial ram disk` 将文件挂载为ram，而默认`kernel`未添加`ram`支持，应该改为挂载`-hda/-hdb file  use 'file' as hard disk 0/1 image`，所以运行命令修改为
+```shell
+#!/bin/bash
+
+qemu-system-aarch64 \
+    -nographic \
+    -M virt \
+    -cpu cortex-a57 \
+    -smp 2 \
+    -m 4G \
+    -kernel /mnt/sdb/dev/linux/build/arch/arm64/boot/Image \
+    -append "nokaslr root=/dev/sda init=/linuxrc console=ttyAMA0 console=ttyS0" \
+    -hda disk.ext3
+```
+
+运行，依然报错：
+
+```log
+[    0.927382] uart-pl011 9000000.pl011: no DMA platform data
+[    0.932510] /dev/root: Can't open blockdev
+[    0.933619] VFS: Cannot open root device "/dev/sda" or unknown-block(0,0): error -6
+[    0.933919] Please append a correct "root=" boot option; here are the available partitions:
+[    0.934481] fe00           32768 vda 
+[    0.934649]  driver: virtio_blk
+[    0.934939] 1f00          131072 mtdblock0 
+[    0.934963]  (driver?)
+```
+
+可以看出是root不对，应该改成vda：
+
+```shell
+#!/bin/bash
+
+qemu-system-aarch64 \
+    -nographic \
+    -M virt \
+    -cpu cortex-a57 \
+    -smp 2 \
+    -m 4G \
+    -kernel /mnt/sdb/dev/linux/build/arch/arm64/boot/Image \
+    -append "nokaslr root=/dev/vda init=/linuxrc console=ttyAMA0 console=ttyS0" \
+    -hda disk.ext3
+```
+
+再次运行：
+
+![image](image/qemu_ok.png)
+
+成功！
