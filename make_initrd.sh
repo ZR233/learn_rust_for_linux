@@ -13,7 +13,7 @@ sudo mount -o loop disk.ext3 $MOUNT_DIR
 sudo cp -arf /mnt/sdb/dev/busybox-1.36.1/_install/* $MOUNT_DIR
 
 cd $MOUNT_DIR
-sudo mkdir -p etc dev mnt proc sys tmp mnt etc/init.d/
+sudo mkdir -p etc dev mnt proc sys tmp mnt etc/init.d/ lib lib/module
 echo "proc /proc proc defaults 0 0" > etc/fstab
 echo "tmpfs /tmp tmpfs defaults 0 0" >> etc/fstab
 echo "sysfs /sys sysfs defaults 0 0" >> etc/fstab

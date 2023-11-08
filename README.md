@@ -144,3 +144,22 @@ qemu-system-aarch64 \
 ![image](image/qemu_ok.png)
 
 成功！
+
+
+## Day 3
+
+今天写一个驱动的`helloworld`。
+首先为`kernel`添加`rust-analyzer`支持。在源码根目录执行：
+```shell
+make ARCH=arm64 LLVM=1 rust-analyzer
+```
+会在`build`目录生成`rust-project.json`，在`.vscode`的`settings.json`添加如下：
+```json5
+{
+    "rust-analyzer.linkedProjects": [
+        "./build/rust-project.json"
+    ]
+}
+```
+就可以为源码添加提示啦。
+之后如教程所讲，添加`rust_helloworld`模块，编译后挂载文件系统，找个文件夹放进去，启动`qemu`，日志等级调成`info`： `dmesg -n 7`，加载驱动，成功。
