@@ -11,7 +11,7 @@ git clone git@github.com:qemu/qemu.git
 cd qemu
 mkdir build
 cd build
-../configure --target-list=riscv64-softmmu,riscv64-linux-user,aarch64-softmmu
+../configure --target-list=riscv64-softmmu,riscv64-linux-user,aarch64-softmmu,x86_64-softmmu
 make -j4
 sudo make install
 
@@ -163,3 +163,21 @@ make ARCH=arm64 LLVM=1 rust-analyzer
 ```
 就可以为源码添加提示啦。
 之后如教程所讲，添加`rust_helloworld`模块，编译后挂载文件系统，找个文件夹放进去，启动`qemu`，日志等级调成`info`： `dmesg -n 7`，加载驱动，成功。
+
+## Day4
+
+休息一天。
+
+## Day5
+
+开始做e1000驱动，首先尝试使用`fujita`的`kernel fork`，发现他的版本较低，用的`rust`版本为`1.66`，本着学习就学最新的原则，准备直接用官方最新版本修改使用。
+`fork`了官方版本，发现`rust`只支持`x86`，对比了`rust-dev`分支，将修改支持`arm64`的部分拷贝过来，编译并运行成功。
+
+## Day6
+
+对比`fujita`的分支，补全官方没有的`API`。
+补了一天，发现需要改动的太多，6.6 的api也有部分变动，后面的实验也不用这个项目，所以还是老实用`fujita`的吧。
+
+## Day7
+
+经过前两天对内核源码的捣鼓，有了些许了解，编译`kernel`，修改代码，练习3轻松完成。
