@@ -2,3 +2,4 @@ mnt
 disk.ext3
 initrd
 dqib_amd64-pc
+disk_x86_64.ext4

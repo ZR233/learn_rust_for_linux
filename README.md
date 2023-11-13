@@ -181,3 +181,16 @@ make ARCH=arm64 LLVM=1 rust-analyzer
 ## Day7
 
 经过前两天对内核源码的捣鼓，有了些许了解，编译`kernel`，修改代码，练习3轻松完成。
+
+
+## Day8
+
+使用`busybox`需要手动添加`/etc/network/interfaces`文件：
+
+```
+auto lo
+iface lo inet loopback
+auto enp2s0
+iface enp2s0 inet dhcp
+```
+
