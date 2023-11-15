@@ -11,7 +11,7 @@ git clone git@github.com:qemu/qemu.git
 cd qemu
 mkdir build
 cd build
-../configure --target-list=riscv64-softmmu,riscv64-linux-user,aarch64-softmmu,x86_64-softmmu
+../configure --target-list=riscv64-softmmu,riscv64-linux-user,aarch64-softmmu,aarch64-linux-user,x86_64-softmmu,x86_64-linux-user
 make -j4
 sudo make install
 
@@ -190,7 +190,21 @@ make ARCH=arm64 LLVM=1 rust-analyzer
 ```
 auto lo
 iface lo inet loopback
-auto enp2s0
-iface enp2s0 inet dhcp
+auto eth0
+iface eth0 inet dhcp
 ```
 
+参考`e1000`驱动源码，填写练习4内容，始终无法获取网络，编译了原版`e1000`驱动测试，也不成功，看来是`qemu`配置问题。
+
+## Day9
+
+到处搜索资料并测试不同配置，发现问题出在没有配置本地回环地址，执行以下语句：
+
+```shell
+# 添加本地回环
+ifconfig lo 127.0.0.1
+# 启动网卡
+ifconfig eth0 up
+```
+
+成功`ping`通。
