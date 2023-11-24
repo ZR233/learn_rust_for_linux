@@ -208,3 +208,80 @@ ifconfig eth0 up
 ```
 
 成功`ping`通。
+
+
+## Day 17
+
+riscv环境配置
+
+busybox 编译
+
+```shell
+make  O=build_riscv ARCH=riscv64 CROSS_COMPILE=riscv64-linux-gnu-  menuconfig -j4
+
+# setting 中打开 build static 
+
+make  O=build_riscv ARCH=riscv64 CROSS_COMPILE=riscv64-linux-gnu- install -j4
+```
+
+linux 编译
+
+```shell
+make LLVM=1  ARCH=riscv defconfig -j4 
+make LLVM=1  ARCH=riscv menuconfig -j4 
+make LLVM=1  ARCH=riscv rust-analyzer
+bear -- make LLVM=1  ARCH=riscv -j4 
+```
+
+## Day 18
+
+给 rust-dev 添加riscv支持：
+```makefile
+# scripts/Makefile
+
+
+# 22行添加，使其生成target 配置
+ifdef CONFIG_RISCV
+always-$(CONFIG_RUST)					+= target.json
+filechk_rust_target = $< < include/config/auto.conf
+
+$(obj)/target.json: scripts/generate_rust_target include/config/auto.conf FORCE
+	$(call filechk,rust_target)
+endif
+```
+
+```rust
+# scripts/generate_rust_target.rs
+
+else if cfg.has("RISCV") {
+        if cfg.has("64BIT") {
+            ts.push("arch", "riscv64");
+            ts.push("data-layout", "e-m:e-p:64:64-i64:64-i128:128-n64-S128");
+            ts.push("llvm-target", "riscv64-linux-gnu");
+            ts.push("target-pointer-width", "64");
+        } else {
+            ts.push("arch", "riscv32");
+            ts.push("data-layout", "e-m:e-p:32:32-i64:64-n32-S128");
+            ts.push("llvm-target", "riscv32-linux-gnu");
+            ts.push("target-pointer-width", "32");
+        }
+        ts.push("code-model", "medium");
+        ts.push("disable-redzone", true);
+        let mut features = "+m,+a".to_string();
+        if cfg.has("RISCV_ISA_C") {
+            features += ",+c";
+        }
+        ts.push("features", features);
+    }
+
+```
+
+
+```Makefile
+# arch/riscv/Makefile
+
+    KBUILD_RUSTFLAGS += --target=$(objtree)/scripts/target.json
+
+```
+
+尝试编译，成功。
