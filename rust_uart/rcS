@@ -1,0 +1,4 @@
+echo "author: ZR233"
+mount -t proc proc /proc
+mount -t sysfs sysfs /sys
+dmesg -n 8

@@ -7,14 +7,18 @@
 编译`Qemu`
 
 ```shell
+sudo apt-get install git libglib2.0-dev libfdt-dev libpixman-1-dev zlib1g-dev libaio-dev libbluetooth-dev libbrlapi-dev libbz2-dev libnfs-dev libiscsi-dev ninja-build python3 python3-pip python3-venv
+
+pip install sphinx sphinx-rtd-theme
+
+
 git clone git@github.com:qemu/qemu.git
 cd qemu
 mkdir build
 cd build
 ../configure --target-list=riscv64-softmmu,riscv64-linux-user,aarch64-softmmu,aarch64-linux-user,x86_64-softmmu,x86_64-linux-user
 make -j4
-sudo make install
-
+sudo make install 
 ```
 
 编译`BusyBox`：
