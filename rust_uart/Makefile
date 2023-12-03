@@ -34,8 +34,40 @@ run: rootfs
 		-machine 'virt' \
  		-kernel $(KDIR)/arch/$(ARCH)/boot/Image \
  		-display none \
+    	-append "root=/dev/vda ro console=ttyS0  loglevel=8" \
+    	-drive file=$(fs_name),format=raw,id=hd0 \
+    	-device virtio-blk-device,drive=hd0 \
+		-serial stdio
+dts: rootfs
+	qemu-system-riscv64 \
+ 		-m 2G \
+		-machine 'virt,dumpdtb=qemu-virt.dtb' \
+ 		-kernel $(KDIR)/arch/$(ARCH)/boot/Image \
+ 		-display none \
     	-append "root=/dev/vda ro console=ttyS0" \
     	-drive file=$(fs_name),format=raw,id=hd0 \
     	-device virtio-blk-device,drive=hd0 \
 		-serial stdio
+	fdtdump qemu-virt.dtb >> qemu-virt.dts
 
+
+debug: 
+	qemu-system-riscv64 \
+ 		-m 2G \
+		-machine 'virt' \
+ 		-kernel $(KDIR)/arch/$(ARCH)/boot/Image \
+ 		-display none \
+    	-append "root=/dev/vda ro console=ttyS0  loglevel=8" \
+    	-drive file=$(fs_name),format=raw,id=hd0 \
+    	-device virtio-blk-device,drive=hd0 \
+		-serial stdio -S -s
+debugc: 
+	qemu-system-riscv64 \
+ 		-m 2G \
+		-machine 'virt' \
+ 		-kernel $(KDIR)-c/arch/$(ARCH)/boot/Image \
+ 		-display none \
+    	-append "root=/dev/vda ro console=ttyS0  loglevel=8" \
+    	-drive file=$(fs_name),format=raw,id=hd0 \
+    	-device virtio-blk-device,drive=hd0 \
+		-serial stdio -S -s
